@@ -1,0 +1,51 @@
+package extensions
+
+import org.apache.beam.sdk.coders.NullableCoder
+import org.apache.beam.sdk.io.TextIO
+import org.apache.beam.sdk.transforms.Count
+import org.apache.beam.sdk.transforms.FlatMapElements
+import org.apache.beam.sdk.transforms.MapElements
+import org.apache.beam.sdk.values.KV
+import org.apache.beam.sdk.values.PCollection
+import org.apache.beam.sdk.values.PDone
+import org.apache.beam.sdk.values.TypeDescriptor
+
+inline fun <I, reified O> PCollection<I>.flatMap(
+    name: String = "flatMap to ${O::class.simpleName}",
+    noinline transform: (I) -> Iterable<O>
+): PCollection<O> {
+    val pc = this.apply(
+        name, FlatMapElements.into(TypeDescriptor.of(O::class.java))
+            .via(transform)
+    )
+    return pc.setCoder(NullableCoder.of(pc.coder))
+}
+
+fun <I> PCollection<I>.countPerElement(
+    name: String = "count per element"
+): PCollection<KV<I, Long>> {
+    return this.apply(name, Count.perElement<I>())
+        .setTypeDescriptor(object : TypeDescriptor<KV<I, Long>>() {})
+}
+
+inline fun <I, reified O> PCollection<I>.map(
+    name: String = "map to ${O::class.simpleName}",
+    noinline transform: (I) -> O
+): PCollection<O> {
+    val pc = this.apply(
+        name,
+        MapElements.into(TypeDescriptor.of(O::class.java))
+            .via(transform)
+    )
+    return pc.setCoder(NullableCoder.of(pc.coder))
+}
+
+fun PCollection<String>.toText(
+    name: String = "Write to Text",
+    filename: String
+): PDone {
+    return this.apply(
+        name,
+        TextIO.write().to(filename)
+    )
+}
