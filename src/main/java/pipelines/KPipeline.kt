@@ -9,6 +9,7 @@ import org.apache.beam.sdk.Pipeline
 import org.apache.beam.sdk.io.TextIO
 import org.apache.beam.sdk.options.PipelineOptions
 import org.apache.beam.sdk.options.PipelineOptionsFactory
+import parsing.Parser
 
 sealed class KPipeline {
     abstract var name: String
@@ -34,7 +35,10 @@ sealed class KPipeline {
         private const val TOKENIZER_PATTERN: String = "[^\\p{L}]+"
         override var name = "WordCountPipeline"
 
+        @ExperimentalStdlibApi
         override fun run(args: Array<String>) {
+            Parser.parse()
+
             val (pipe, options) = from<WordCountOptions>(args)
 
             pipe.apply(TextIO.read().from(options.inputFile))

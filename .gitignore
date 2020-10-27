@@ -4,3 +4,6 @@
 **/gradle
 **/*.hprof
 **/.DS_Store
+
+**/output.txt*
+**/AllowedCsvFormat.kt

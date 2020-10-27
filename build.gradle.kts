@@ -21,9 +21,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
     implementation("org.apache.beam:beam-sdks-java-core:2.6.0")
     implementation("org.apache.beam:beam-runners-direct-java:2.6.0")
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("org.slf4j:slf4j-api:1.7.28")
+    implementation("org.slf4j:slf4j-jdk14:1.7.28")
     testImplementation(platform("org.junit:junit-bom:5.7.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(kotlin("test-junit5"))
 }
 
 java {
